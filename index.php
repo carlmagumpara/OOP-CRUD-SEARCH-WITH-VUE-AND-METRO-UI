@@ -10,6 +10,13 @@
     	.wrapper {
     		margin-top: 50px;
     	}
+    	.unlist-style {
+    		list-style: none;
+    	}
+    	.no-padding {
+    		padding: 0px;
+    		margin: 0px;
+    	}
     </style>
     <script src="bower_components/vue/dist/vue.min.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -160,13 +167,21 @@
 					    	$('#addDataButton').removeClass('loading-cube lighten').text('ADD NEW DATA')
 				    	} else {
 							$.Notify({
-							    caption: 'INFO ALERT',
-							    content: result.message,
+							    caption: 'ERROR',
+							    content: vm.listErrors(result.data),
 							    type: 'alert'
 							});
 				    		$('#addDataButton').removeClass('loading-cube lighten').text('ADD NEW DATA')
 				    	}
 				    })
+	     		},
+	     		listErrors(data){
+	     			result = JSON.parse(JSON.parse(data))
+	     			var li = ''
+	     			for (var i = 0; i < result.length; i++) {
+	     				 li += '<li>'+result[i]+'</li>'
+	     			}
+	     			return '<ul class="unlist-style no-padding">'+li+'</ul>'
 	     		},
 	     		editData(data) {
 	     			vm = this
@@ -210,6 +225,11 @@
 			     			vm.id = vm.name = vm.age = vm.gender = vm.address = ''
 			     			$('#updateDataButton').removeClass('loading-cube lighten').text('UPDATE DATA')
 				    	} else {
+							$.Notify({
+							    caption: 'ERROR',
+							    content: vm.listErrors(result.data),
+							    type: 'alert'
+							});
 				    		$('#updateDataButton').removeClass('loading-cube lighten').text('UPDATE DATA')
 				    	}
 				    })
