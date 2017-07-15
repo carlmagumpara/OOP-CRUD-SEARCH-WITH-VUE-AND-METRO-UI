@@ -19,8 +19,6 @@
     	}
     </style>
     <script src="bower_components/vue/dist/vue.min.js"></script>
-    <script src="js/vue-resource.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vuejs-paginator/2.0.0/vuejs-paginator.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="js/metro.min.js"></script>
 </head>
