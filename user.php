@@ -24,7 +24,6 @@
 		{
 			$stmt = $this->conn->prepare('UPDATE users SET name = ?, age = ?, gender = ?, address = ? WHERE  id  = ?');
 			$stmt->bind_param('ssbsi', $data['name'], $data['age'], $data['gender'], $data['address'], $data['id']);
-
 			if ($stmt->execute()) {
 				return TRUE;
 			} else {
@@ -63,6 +62,8 @@
 				        	);
 				    }
 				    return json_encode($data);
+				} else {
+					return FALSE;
 				}
 			} else {
 				return json_encode(array(
@@ -72,9 +73,10 @@
 			}
 		}
 
-		function fetch() 
+		function fetch($page) 
 		{
-			$stmt = $this->conn->prepare('SELECT * FROM users');
+			$stmt = $this->conn->prepare('SELECT * FROM users ORDER BY id DESC LIMIT 5 OFFSET ?');
+			$stmt->bind_param('i', $page);
 			$stmt->execute();
 			$result = $stmt->get_result();
 			$data = array();
@@ -100,5 +102,4 @@
 			}
 		}
 	}
-
 ?>

@@ -4,5 +4,11 @@
 	$database = new Database();
 	$connect = $database->connect();
 	$user = new User($connect);
-	echo $user->fetch();
+	$page = $_GET['users'];
+	if ($user->fetch($page)) {
+		echo $user->fetch($page);
+	} else {
+		echo '[]';
+	}
+	
 ?>

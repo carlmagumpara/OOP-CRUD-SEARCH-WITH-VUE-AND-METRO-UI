@@ -5,5 +5,9 @@
 	$connect = $database->connect();
 	$user = new User($connect);
 	$q = "%".$_GET['q']."%";
-	echo $user->search($q);
+	if ($user->search($q)) {
+		echo $user->search($q);
+	} else {
+		echo '[]';
+	}
 ?>

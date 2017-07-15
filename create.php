@@ -20,18 +20,20 @@
 			echo json_encode(array(
 				'result' => 'success', 
 				'message' => 'Data successfully saved!',
-				'data' => json_encode($data),
+				'response' => json_encode($data),
 			));
 		} else {
 			echo json_encode(array(
 				'result' => 'error', 
 				'message' => 'Error saving your data!', 
+				'response' => $connect->error,
 			));
 		}
 	} else {
 		echo json_encode(array(
-			'result' => 'error', 
-			'data' => json_encode($validate), 
+			'result' => 'error',
+			'message' => 'Error saving your data!', 
+			'response' => json_encode($validate), 
 		));
 	}
 

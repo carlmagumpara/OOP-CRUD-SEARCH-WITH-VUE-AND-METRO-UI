@@ -19,6 +19,8 @@
     	}
     </style>
     <script src="bower_components/vue/dist/vue.min.js"></script>
+    <script src="js/vue-resource.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vuejs-paginator/2.0.0/vuejs-paginator.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="js/metro.min.js"></script>
 </head>
@@ -62,6 +64,11 @@
 							</tr>
 						</tbody>
 					</table>
+					<div v-if="pagination">
+						<button class="button primary" id="next" @click.prevent="nextPage" v-if="data.length >= 5">NEXT</button>
+						<button class="button primary" id="prev" @click.prevent="prevPage"  v-if="page != 0">PREV</button>
+						<span>Page {{ page }} to {{ page + 5 }} </span>			
+					</div>
 	            </div>
 	         </div>
 	        <div class="row flex-just-center">
@@ -118,167 +125,6 @@
 	        </div>			
 		</div>
 	</div>
-
-    <script type="text/javascript">
-	     new Vue({
-	     	el: '#app',
-	     	data: {
-     			addData: true,
-     			id: '',
-     			name: '',
-     			age: '',
-     			gender: '',
-     			address: '',
-     			data : [],
-     			temp: [],
-     			search: ''
-	     	},
-	     	created() {
-	     		this.fetchData();
-	     	},
-	     	methods: {
-	     		fetchData(){
-	     			vm = this
-	     			$.get('fetch.php', function(data, status){
-	     				result = JSON.parse(data);
-	     				vm.data = result;
-	     			});
-	     		},
-	     		addNewData(){
-	     			vm = this
-	     			data = {
-	     				name: this.name,
-	     				age: this.age,
-	     				gender: this.gender,
-	     				address: this.address,
-	     				action: 'addNewData'
-	     			}
-	     			$('#addDataButton').addClass('loading-cube lighten').text('LOADING...')
-				   	$.post('create.php', data , function(data, status){
-				    	result = JSON.parse(data)
-				    	if (result.result === 'success') {
-							$.Notify({
-							    caption: 'INFO ALERT',
-							    content: result.message,
-							    type: 'success'
-							});
-					    	vm.name = vm.age = vm.gender = vm.address = ''
-					    	vm.data.push(JSON.parse(result.data))
-					    	$('#addDataButton').removeClass('loading-cube lighten').text('ADD NEW DATA')
-				    	} else {
-							$.Notify({
-							    caption: 'ERROR',
-							    content: vm.listErrors(result.data),
-							    type: 'alert'
-							});
-				    		$('#addDataButton').removeClass('loading-cube lighten').text('ADD NEW DATA')
-				    	}
-				    })
-	     		},
-	     		listErrors(data){
-	     			result = JSON.parse(JSON.parse(data))
-	     			var li = ''
-	     			for (var i = 0; i < result.length; i++) {
-	     				 li += '<li>'+result[i]+'</li>'
-	     			}
-	     			return '<ul class="unlist-style no-padding">'+li+'</ul>'
-	     		},
-	     		editData(data) {
-	     			vm = this
-	     			vm.addData = false
-	     			vm.id = data.id
-     				vm.name = data.name
-     				vm.age = data.age
-     				vm.gender = data.gender
-     				vm.address = data.address
-     				vm.temp = data
-	     		},
-	     		cancelEdit() {
-	     			vm = this
-	     			vm.addData = true
-	     			vm.temp = []
-	     			vm.id = vm.name = vm.age = vm.gender = vm.address = ''
-	     		},
-	     		updateData(){
-	     			vm = this
-	     			data = {
-	     				id: this.id,
-	     				name: this.name,
-	     				age: this.age,
-	     				gender: this.gender,
-	     				address: this.address,
-	     				action: 'updateData'
-	     			}
-	     			$('#updateDataButton').addClass('loading-cube lighten').text('LOADING...')
-				   	$.post('update.php', data , function(data, status){
-				    	result = JSON.parse(data)
-				    	if (result.result === 'success') {
-							$.Notify({
-							    caption: 'INFO ALERT',
-							    content: result.message,
-							    type: 'success'
-							});
-							index = vm.data.indexOf(vm.temp)
-							vm.data[index] = JSON.parse(result.data)
-			     			vm.addData = true
-			     			vm.temp = []
-			     			vm.id = vm.name = vm.age = vm.gender = vm.address = ''
-			     			$('#updateDataButton').removeClass('loading-cube lighten').text('UPDATE DATA')
-				    	} else {
-							$.Notify({
-							    caption: 'ERROR',
-							    content: vm.listErrors(result.data),
-							    type: 'alert'
-							});
-				    		$('#updateDataButton').removeClass('loading-cube lighten').text('UPDATE DATA')
-				    	}
-				    })
-	     		},
-	     		searchData() {
-	     			vm = this
-	     			$.get('search.php?q='+vm.search, function(data, status){
-	     				if (data) {
-		     				result = JSON.parse(data)
-		     				vm.data = result
-	     				} else {
-	     					vm.data = []
-	     				}
-	     			})
-	     		},
-	     		deleteData(data) {
-	     			vm = this
-	     			vm.addData = true
-					metroDialog.create({
-					    title: "Delete Data",
-					    content: "Are you sure you want to delete this data?",
-					    actions: [
-					        {
-					            title: "Yes",
-					            onclick: function(el){
-					                $(el).data('dialog').close();
-					     			$.get('delete.php?id='+data.id, function(data, status){
-					     				result = JSON.parse(data);
-										$.Notify({
-										    caption: 'INFO ALERT',
-										    content: result.message,
-										    type: 'success'
-										});
-					     				index = vm.data.indexOf(data)
-					     				vm.data.splice(index)
-					     			})
-					            }
-					        },
-					        {
-					            title: "Cancel",
-					            cls: "js-dialog-close"
-					        }
-					    ],
-					    options: {
-					    }
-					});
-	     		}
-	     	}
-	     })
-    </script>
+    <script src="index.js"></script>
 </body>
 </html>
